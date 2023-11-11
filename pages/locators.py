@@ -15,3 +15,11 @@ class LoginPageLocators:
     REGISTRATION_BUTTON = (By.CSS_SELECTOR, '[name="registration_submit"]')  # кнопка регистрации
     LOGIN_FORM = (By.CSS_SELECTOR, "#login_form")             # форма логина
     REGISTER_FORM = (By.CSS_SELECTOR, "#register_form")       # форма регистрации
+
+
+class ProductPageLocators:
+    BUTTON_ADD_TO_BASKET = (By.CSS_SELECTOR, '[type="submit"].btn-lg')      # кнопка добавления в корзину
+    PRODUCT_NAME = (By.XPATH, """//h1[text()="The shellcoder's handbook"]""")     # имя товара на странице
+    NAME_OF_THE_ADDED_PRODUCT_BASKET = (By.XPATH, """//strong[text()="The shellcoder's handbook"]""")      # имя добавленного товара в корзину
+    PRICE_PRODUCT = (By.CSS_SELECTOR, ".product_main .price_color")                       # цена товара
+    PRICE_PRODUCT_IN_BASKET = (By.CSS_SELECTOR, ".alert > .alertinner > p > strong")      # стоимость корзины
