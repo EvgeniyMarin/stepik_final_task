@@ -19,9 +19,14 @@ class ProductPage(BasePage):
         text_price_in_basket = self.browser.find_element(*ProductPageLocators.PRICE_PRODUCT_IN_BASKET).text
         print(f"цена товара: {text_price}, стоимость корзины: {text_price_in_basket}")
         assert text_price == text_price_in_basket, "Цена товара и стоимость корзины ОТЛИЧАЕТСЯ"
-        
-        
 
+    def should_not_be_success_message(self):
+        """Метод для проверки ОТСУТСТВИЯ сообщения об успешном добавлении товара в корзину"""
+        assert self.is_not_element_present(*ProductPageLocators.NAME_OF_THE_ADDED_PRODUCT_BASKET), \
+            "Success message is presented, but should not be"
 
-    """Дописать методы проверки"""
+    def message_should_disappear(self):
+        """Метод проверки, что сообщение должно исчезнуть"""
+        assert self.is_disappeared(*ProductPageLocators.NAME_OF_THE_ADDED_PRODUCT_BASKET), \
+            "Success message is presented, but should not be"
 

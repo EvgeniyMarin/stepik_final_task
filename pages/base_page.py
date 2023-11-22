@@ -1,6 +1,10 @@
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import NoAlertPresentException
 import math
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from .locators import BasePageLocators
 
 
 class BasePage:
@@ -10,9 +14,25 @@ class BasePage:
         self.browser.implicitly_wait(timeout)
 
     def open(self):
+        """Метод для открытия страницы по заданному URL"""
         self.browser.get(self.url)
 
+    def go_to_login_page(self):
+        """Метод для нажатия на кнопку логирования/регистрации"""
+        login_link = self.browser.find_element(*BasePageLocators.LOGIN_LINK)
+        login_link.click()
+
+    def go_to_basket(self):
+        """Метод для перехода в корзину"""
+        basket_link = self.browser.find_element(*BasePageLocators.BUTTON_BASKET)
+        basket_link.click()
+
+    def should_be_login_link(self):
+        """Метод наличия кнопки логирования/регистрации"""
+        assert self.is_element_present(*BasePageLocators.LOGIN_LINK), "Login link is not presented"
+
     def is_element_present(self, how, what):
+        """Метод для проверки наличия элемента"""
         try:
             self.browser.find_element(how, what)
         except NoSuchElementException:
@@ -20,6 +40,7 @@ class BasePage:
         return True
 
     def solve_quiz_and_get_code(self):
+        """Метод для расчета математической задачи"""
         alert = self.browser.switch_to.alert
         x = alert.text.split(" ")[2]
         answer = str(math.log(abs((12 * math.sin(float(x))))))
@@ -32,3 +53,27 @@ class BasePage:
             alert.accept()
         except NoAlertPresentException:
             print("No second alert presented")
+
+    def is_not_element_present(self, how, what, timeout=4):
+        """Метод проверки, что элемент не появился на странице в течении заданного времени"""
+        try:
+            WebDriverWait(self.browser, timeout).until(EC.presence_of_element_located((how, what)))
+        except TimeoutException:
+            return True
+
+        return False
+
+    def is_disappeared(self, how, what, timeout=4):
+        """Метод проверки на то что сообщение о добавлении в корзину исчезло со временем"""
+        try:
+            WebDriverWait(self.browser, timeout, 1, TimeoutException). \
+                until_not(EC.presence_of_element_located((how, what)))
+        except TimeoutException:
+            return False
+
+        return True
+
+    def should_be_authorized_user(self):
+        """Проверка того, что пользователь залогирован"""
+        assert self.is_element_present(*BasePageLocators.USER_ICON), "User icon is not presented," \
+                                                                     " probably unauthorised user"
